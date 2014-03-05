@@ -9,6 +9,11 @@ By default, this class configures a new cluster consisting of a single node.
 Subsequent nodes can be joined to the cluster by setting the $joiner parameter
 to true and nominating a donor via the $donor_ip parameter.
 
+## Requirements
+
+   puppetlabs/stdlib
+   haproxy
+
 ## Usage
 
    Assign class percona::node to via your favourite ENC or add a node entry.
@@ -36,7 +41,55 @@ to true and nominating a donor via the $donor_ip parameter.
      }
    }
   ```
+### Load balancing/failover
 
+#### Servers
+
+   This node definition will add the node to a HAproxy listener group that's declared
+   on the clients (see Clients section below). 
+
+   defined on 
+   ```puppet
+   node percona-node1 {
+     class { 'percona::haproxy':   
+            haproxy_listener => 'loadbalanced_mysql',
+     }
+   }
+   ```
+
+   By default, this class deploys an active-active haproxy load balancer.
+   If you want an active-backup (failover) load balancer, define as follows:
+
+   ```puppet
+   node percona-node1 {
+     class { 'percona::haproxy':   
+            haproxy_listener => 'loadbalanced_mysql',
+            haproxy_failover => true,
+            haproxy_primary  => true,
+     }
+   }
+   ```
+   Note: Only one node can be haproxy_primary in this configuration. Define
+   the backup nodes without the haproxy_primary statement.
+
+#### Load balancer(s)
+
+  Define a HAproxy load balancer consisting of the servers defined above.
+
+  ```puppet
+  haproxy::listen { $haproxy_listener:
+    ipaddress  => '127.0.0.1',
+    ports      => '3306',
+    options    => {
+     'option'  => [
+       'tcpka',
+       'httpchk',
+        'tcplog',
+     ],
+     'balance' => 'leastconn',
+    },
+  }
+  ```
 ## Parameters
  
 ###`cluster_name`
