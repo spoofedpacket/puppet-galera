@@ -41,46 +41,46 @@ to true and nominating a donor via the $donor_ip parameter.
  
 ###`cluster_name`
 
-    Type: String. Default: 'my_cluster'. Name of the cluster to create or join.
+Type: String. Default: 'my_cluster'. Name of the cluster to create or join.
 
 ###`joiner`
 
-    Type: Bool. Default: 'false'. Is the node joining an existing cluster?
+Type: Bool. Default: 'false'. Is the node joining an existing cluster?
 
 ###`donor_ip` 
 
-    Type: String. Default: '0.0.0.0'. IP of pre-existing node to perform an
-    initial state transfer from when joining a cluster.
+Type: String. Default: '0.0.0.0'. IP of pre-existing node to perform an
+initial state transfer from when joining a cluster.
 
 ###`sst_method` 
 
-    Type: String. Default: 'xtrabackup'. SST (state transfer method) to when joining
-    a cluster. Other possibilities are 'rsync' and 'mysqldump'. See percona docs for
-    further info.
+Type: String. Default: 'xtrabackup'. SST (state transfer method) to when joining
+a cluster. Other possibilities are 'rsync' and 'mysqldump'. See percona docs for
+further info.
 
 ###`sst_user`
 
-    Type: String. Default: 'wsrep_sst'. MySQL user that performs the SST. Only used for the 'mysqldump' SST method.
+Type: String. Default: 'wsrep_sst'. MySQL user that performs the SST. Only used for the 'mysqldump' SST method.
 
 ###`sst_password`
 
-    Type: String. Default: 'password'. Password for SST MySQL user.
+Type: String. Default: 'password'. Password for SST MySQL user.
 
 ###`root_password`
 
-    Type: String. Default: 'password'. Password for the MySQL root user.
+Type: String. Default: 'password'. Password for the MySQL root user.
 
 ###`maint_password`
 
-    Type: String. Default: 'maint'. Password for the debian_sys_maint MySQL user.
+Type: String. Default: 'maint'. Password for the debian_sys_maint MySQL user.
 
 ###`old_root_password`
 
-    Type: String. Default: ''.
+Type: String. Default: ''.
 
 ###`enabled`
 
-    Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
+Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 
 ## Requirements
 
