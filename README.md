@@ -11,8 +11,8 @@ to true and nominating a donor via the $donor_ip parameter.
 
 ## Requirements
 
-   puppetlabs/stdlib
-   haproxy
+   * puppetlabs/stdlib
+   * haproxy
 
 ## Usage
 
@@ -48,7 +48,6 @@ to true and nominating a donor via the $donor_ip parameter.
    This node definition will add the node to a HAproxy listener group that's declared
    on the clients (see Clients section below). 
 
-   defined on 
    ```puppet
    node percona-node1 {
      class { 'percona::haproxy':   
