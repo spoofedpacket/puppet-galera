@@ -1,0 +1,139 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          garbd
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start garbd at boot time
+# Description:       Enables Galera Arbitrator service. By Mike Green <myatus@gmail.com>
+### END INIT INFO
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+DAEMON=/usr/bin/garbd
+[ -x "$DAEMON" ] || exit 0
+
+NAME=garbd
+DESC="Galera Arbitrator"
+VERBOSE=yes
+GARBD_LOG="/var/log/garbd/garbd.log"
+CERT="/etc/garbd/replication-cert.pem"
+KEY="/etc/garbd/replication-key.pem"
+GARBD_ADDRESS=""
+GARBD_GROUP=""
+
+[ -r /etc/garbd/garbd.cfg ] && . /etc/garbd/garbd.cfg
+
+. /lib/init/vars.sh
+. /lib/lsb/init-functions
+
+LISTEN_PORT=4567
+PIDFILE="/var/run/${NAME}.pid"
+SCRIPTNAME=${0##*/}
+SCRIPTNAME=${SCRIPTNAME#[SK]??}
+ACTION="$1"
+
+## Checks if garbd is running
+#
+# check_alive insists on garbd listening
+# check_dead also fails if there is a lost garbd in the process list
+#
+# Usage: boolean garbd_status [check_alive|check_dead]
+garbd_status () {
+    # Check if listening
+    port_output=`lsof -i TCP:${LISTEN_PORT} | wc -l`
+    port_alive=0
+    if [ "$port_output" -gt 0 ]; then port_alive=1; fi
+
+    # Check if alive
+    ps_alive=0
+    if [ -f "$PIDFILE" ] && ps `cat $PIDFILE` >/dev/null 2>&1; then ps_alive=1; fi
+
+    if [ "$1" = "check_alive"  -a  $port_alive = 1 ] ||
+       [ "$1" = "check_dead"   -a  $port_alive = 0  -a  $ps_alive = 0 ]; then
+        return 0 # EXIT_SUCCESS
+    else
+        return 1 # EXIT_FAILURE
+    fi
+}
+
+case "$ACTION" in
+    start)
+        log_daemon_msg "Starting $DESC" "$NAME"
+        start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $DAEMON -- \
+            --log $GARBD_LOG --address $GARBD_ADDRESS --group $GARBD_GROUP \
+            --options "socket.ssl_cert = $CERT; socket.ssl_key = $KEY"
+
+        for i in 1 2 3 4 5 6 7 8 9 10; do
+            sleep 1
+            if garbd_status check_alive; then break; fi
+            log_progress_msg "."
+        done
+
+        sleep 3
+
+        if garbd_status check_alive; then
+            log_end_msg 0
+        else
+            log_end_msg 1
+            log_failure_msg "Please take a look at ${GARBD_LOG}"
+        fi
+        ;;
+
+    stop)
+        log_daemon_msg "Stopping $DESC" "$NAME"
+        if ! garbd_status check_dead; then
+            start-stop-daemon --oknodo --stop --quiet --pidfile $PIDFILE --exec $DAEMON
+
+            sleep 1
+
+            if ! garbd_status check_dead; then
+                log_end_msg 1
+                log_daemon_msg "Killing $DESC by signal" "$NAME"
+
+                killall -15 garbd
+
+                server_down=
+                for i in 1 2 3 4 5 6 7 8 9 10; do
+                    sleep 1
+                    if garbd_status check_dead; then server_down=1; break; fi
+                done
+                if test -z "$server_down"; then killall -9 garbd; fi
+            else
+                rm $PIDFILE
+            fi
+        fi
+
+        sleep 1
+
+        if ! garbd_status check_dead; then
+            log_end_msg 1
+            log_failure_msg "Please stop garbd manually!"
+            exit -1
+        else
+            log_end_msg 0
+        fi
+        ;;
+
+    restart|force-reload)
+        /etc/init.d/garbd stop
+        /etc/init.d/garbd start
+        ;;
+
+    status)
+        if garbd_status check_alive; then
+            log_action_msg "$DESC is running"
+        else
+            log_action_msg "$DESC is stopped"
+            exit 3
+        fi
+        ;;
+    *)
+        echo "Usage: $SCRIPTNAME {start|stop|restart|force-reload|status}" >&2
+        exit 3
+        ;;
+esac
+
+:

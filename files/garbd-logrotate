@@ -1,0 +1,10 @@
+/var/log/garbd/*log {
+  missingok
+  create 0644 root root
+  compress
+  rotate 4
+  
+  postrotate
+    pkill -USR2 garbd
+  endscript
+}

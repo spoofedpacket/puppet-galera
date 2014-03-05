@@ -1,4 +1,4 @@
-# Define: mysql::db
+# Define: percona::db
 #
 # This module creates database instances, a user, and grants that user
 # privileges to the database.  It can also import SQL from a file in order to,
@@ -32,7 +32,7 @@
 #    grant    => ['all']
 #  }
 #
-define galera::db (
+define percona::db (
   $user,
   $password,
   $charset     = 'utf8',
@@ -46,7 +46,7 @@ define galera::db (
     ensure   => present,
     charset  => $charset,
     provider => 'mysql',
-    require  => Class['galera'],
+    require  => Class['percona::node'],
   }
 
   database_user { "${user}@${host}":

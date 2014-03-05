@@ -38,17 +38,17 @@ bind-address=0.0.0.0
 ##
 
 # Full path to wsrep provider library or 'none'
-wsrep_provider=/usr/lib/galera/libgalera_smm.so
+wsrep_provider=/usr/lib/libgalera_smm.so
 
 # Provider specific configuration options
-#wsrep_provider_options=
+wsrep_provider_options="socket.ssl_cert = /etc/mysql/replication-cert.pem; socket.ssl_key = /etc/mysql/replication-key.pem"
 
 # Logical cluster name. Should be the same for all nodes.
 wsrep_cluster_name="<%=cluster_name-%>"
 
 # Group communication system handle
-<% if master_ip -%>
-wsrep_cluster_address="gcomm://<%= master_ip %>"
+<% if joiner -%>
+wsrep_cluster_address="gcomm://<%= donor_ip %>"
 <% else -%>
 wsrep_cluster_address="gcomm://"
 <% end -%>
@@ -65,7 +65,7 @@ wsrep_cluster_address="gcomm://"
 #wsrep_node_incoming_address=
 
 # How many threads will process writesets from other nodes
-wsrep_slave_threads=1
+wsrep_slave_threads=4
 
 # DBUG options for wsrep provider
 #wsrep_dbug_option
@@ -105,14 +105,14 @@ wsrep_causal_reads=0
 # --primary - whether the component is primary or not ("yes"/"no")
 # --members - comma-separated list of members
 # --index   - index of this node in the list
-wsrep_notify_cmd=
+wsrep_notify_cmd=/usr/local/bin/perconanotify.py
 
 ##
 ## WSREP State Transfer options
 ##
 
 # State Snapshot Transfer method
-wsrep_sst_method=rsync
+wsrep_sst_method=<%=sst_method-%>
 
 # Address on THIS node to receive SST at. DON'T SET IT TO DONOR ADDRESS!!!
 # (SST method dependent. Defaults to the first IP of the first interface)
@@ -120,7 +120,7 @@ wsrep_sst_method=rsync
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
-wsrep_sst_auth=wsrep_sst:password
+wsrep_sst_auth=<%=sst_user-%>:<%=sst_password-%>
 
 # Desired SST donor name.
 #wsrep_sst_donor=

@@ -1,12 +1,12 @@
 #
-# class galera::health_check provides in-depth monitoring of a MySQL Galera Node. 
+# class percona::health_check provides in-depth monitoring of a MySQL Percona Node. 
 # The class is meant to be used in conjunction with HAProxy.
 # The class  has only been tested on Ubuntu 12.04 and HAProxy 1.4.18-0ubuntu1
 #
 # Requires augeas puppet module
 #
-# Here is an example HAProxy configuration that implements Galera health checking
-#listen galera 192.168.220.40:3306
+# Here is an example HAProxy configuration that implements Percona health checking
+#listen percona 192.168.220.40:3306
 #  balance  leastconn
 #  mode  tcp
 #  option  tcpka
@@ -17,9 +17,9 @@
 #
 # Example Usage:
 #
-# class {'galera::health_check': }
+# class {'percona::health-check': }
 #
-class galera::health_check(
+class percona::health_check(
   $mysql_host           = '127.0.0.1',
   $mysql_port           = '3306',
   $mysql_bin_dir        = '/usr/bin/mysql',
@@ -48,7 +48,6 @@ class galera::health_check(
 
   package { 'xinetd':
     ensure  => present,
-    require => Package["mysql-server-wsrep","galera","mysql-client-5.5"],
   }
 
   file { $mysqlchk_script_dir:
@@ -67,10 +66,10 @@ class galera::health_check(
     group   => 'root',
   }
 
-  file { "${mysqlchk_script_dir}/galera_chk":
+  file { "${mysqlchk_script_dir}/percona_chk":
     mode    => '0755',
     require => File[$mysqlchk_script_dir],
-    content => template("galera/galera_chk"),
+    content => template("percona/percona_chk"),
     owner   => 'root',
     group   => 'root',
   }
@@ -78,7 +77,7 @@ class galera::health_check(
   file { "${xinetd_dir}/mysqlchk":
     mode    => '0644',
     require => File[$xinetd_dir],
-    content => template("galera/mysqlchk"),
+    content => template("percona/mysqlchk"),
     owner   => 'root',
     group   => 'root',  
   }
@@ -97,7 +96,7 @@ class galera::health_check(
   }
 
   # Create a user for script to use for checking MySQL health status.
-  galera::db { 'mysql':
+  percona::db { 'mysql':
     user     => $mysqlchk_user,
     password => $mysqlchk_password,
     host     => $mysql_host,
