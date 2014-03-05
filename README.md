@@ -13,10 +13,11 @@ to true and nominating a donor via the $donor_ip parameter.
 
    * puppetlabs/stdlib
    * haproxy
+   * Working PuppetDB with storeconfigs enabled, in order to use exported resources.
 
 ## Usage
 
-   Assign class percona::node to via your favourite ENC or add a node entry.
+   Assign class percona::node via your favourite ENC or simply add a node entry.
 
 ### Create a new cluster from scratch
 
@@ -133,10 +134,6 @@ Type: String. Default: ''.
 ###`enabled`
 
 Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
-
-## Requirements
-
-HAproxy integration requires PuppetDB with storeconfigs enabled, in order to use exported resources.
 
 ## Author
 
