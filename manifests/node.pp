@@ -21,12 +21,24 @@
 #    Type: String. Default: 'xtrabackup'. SST (state transfer method) to when joining
 #    a cluster. Other possibilities are 'rsync' and 'mysqldump'. See galera docs for
 #    further info.
-#   [*sst_user*]          = 'wsrep_sst',
-#   [*sst_password*]      = 'password',
-#   [*root_password*]     = 'password',
-#   [*maint_password*]    = 'maint',
-#   [*old_root_password*] = '',
-#   [*enabled*]           = true,
+#
+#   [*sst_user*]
+#    Type: String. Default: 'wsrep_sst'. MySQL user that performs the SST. Only used for the 'mysqldump' SST method.
+#
+#   [*sst_password*]
+#    Type: String. Default: 'password'. Password for SST MySQL user.
+#
+#   [*root_password*]
+#    Type: String. Default: 'password'. Password for the MySQL root user.
+#
+#   [*maint_password*]
+#    Type: String. Default: 'maint'. Password for the debian_sys_maint MySQL user.
+#
+#   [*old_root_password*]
+#     Type: String. Default: ''.
+#
+#   [*enabled*]
+#     Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 #
 # === Examples
 #
