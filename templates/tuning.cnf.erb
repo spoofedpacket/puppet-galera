@@ -1,0 +1,26 @@
+#
+# This file is managed by puppet (percona/templates/tuning.cnf.erb)
+#
+# Place any MySQL performance tuning settings in here.
+#
+[mysqld]
+innodb_buffer_pool_size     = <%= innodb_buffer_pool_size %>
+innodb_data_file_path       = <%= innodb_data_file_path %>
+innodb_flush_method         = <%= innodb_flush_method %>
+innodb_file_per_table       = <%= innodb_file_per_table %>
+table_open_cache            = <%= table_open_cache %>
+max_connections             = <%= max_connections %>
+wait_timeout                = <%= wait_timeout %>
+tmp_table_size              = <%= tmp_table_size %>
+max_heap_table_size         = <%= max_heap_table_size %>
+thread_cache_size           = <%= thread_cache_size %>
+open_files_limit            = <%= open_files_limit %>
+table_definition_cache      = <%= table_definition_cache %>
+<% if @other_options %>
+#
+# Other options.
+#
+<% other_options.each do |option| %>
+<%=option-%>
+<% end %>
+<% end %>
