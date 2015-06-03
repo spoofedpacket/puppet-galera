@@ -166,7 +166,7 @@ class percona::node (
   }
 
   file { '/root/.my.cnf':
-       content => template('mysql/my.cnf.pass.erb'),
+       content => template('percona/my.cnf.pass.erb'),
        mode    => '0600',
        require => Exec['set_mysql_rootpw'],
   }
