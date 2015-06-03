@@ -18,8 +18,8 @@
 #    initial state transfer from when joining a cluster.
 #
 #   [*sst_method*] 
-#    Type: String. Default: 'xtrabackup'. SST (state transfer method) to when joining
-#    a cluster. Other possibilities are 'rsync' and 'mysqldump'. See galera docs for
+#    Type: String. Default: 'xtrabackupv2'. SST (state transfer method) to when joining
+#    a cluster. Other possibilities are 'xtrabackup', 'rsync' and 'mysqldump'. See galera docs for
 #    further info.
 #
 #   [*sst_user*]
@@ -73,7 +73,7 @@ class percona::node (
     $cluster_name	     = 'my_cluster', 
     $joiner 		       = false,
     $donor_ip          = '0.0.0.0',
-    $sst_method        = 'xtrabackup',
+    $sst_method        = 'xtrabackupv2',
     $sst_user          = 'wsrep_sst',
     $sst_password      = 'password',
     $root_password     = 'password',
