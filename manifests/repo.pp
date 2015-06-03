@@ -1,8 +1,11 @@
 class percona::repo {
+
+    include apt
+
     apt::source { 'percona':
         location   => 'http://repo.percona.com/apt',
         release    => $::lsbdistcodename,
         repos      => 'main',
-        key        => 'CD2EFD2A',
+        id         => '1C4CBDCDCD2EFD2A',
     }
 }
