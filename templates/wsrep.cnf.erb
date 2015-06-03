@@ -44,11 +44,11 @@ wsrep_provider=/usr/lib/libgalera_smm.so
 wsrep_provider_options="socket.ssl_cert = /etc/mysql/replication-cert.pem; socket.ssl_key = /etc/mysql/replication-key.pem"
 
 # Logical cluster name. Should be the same for all nodes.
-wsrep_cluster_name="<%=cluster_name-%>"
+wsrep_cluster_name="<%= @cluster_name-%>"
 
 # Group communication system handle
-<% if joiner -%>
-wsrep_cluster_address="gcomm://<%= donor_ip %>"
+<% if @joiner -%>
+wsrep_cluster_address="gcomm://<%= @donor_ip %>"
 <% else -%>
 wsrep_cluster_address="gcomm://"
 <% end -%>
@@ -112,7 +112,7 @@ wsrep_notify_cmd=/usr/local/bin/perconanotify.py
 ##
 
 # State Snapshot Transfer method
-wsrep_sst_method=<%=sst_method-%>
+wsrep_sst_method=<%= @sst_method-%>
 
 # Address on THIS node to receive SST at. DON'T SET IT TO DONOR ADDRESS!!!
 # (SST method dependent. Defaults to the first IP of the first interface)
@@ -120,7 +120,7 @@ wsrep_sst_method=<%=sst_method-%>
 
 # SST authentication string. This will be used to send SST to joining nodes.
 # Depends on SST method. For mysqldump method it is root:<root password>
-wsrep_sst_auth=<%=sst_user-%>:<%=sst_password-%>
+wsrep_sst_auth=<%= @sst_user-%>:<%= @sst_password-%>
 
 # Desired SST donor name.
 #wsrep_sst_donor=

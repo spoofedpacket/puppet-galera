@@ -9,7 +9,7 @@ service mysqlchk
         port            = 9200
         wait            = no
         user            = nobody
-        server          = <%= mysqlchk_script_dir %>/percona_chk
+        server          = <%= @mysqlchk_script_dir %>/percona_chk
         log_on_failure  += USERID
         disable         = no
         only_from       = 193.1.0.0/16
