@@ -100,9 +100,19 @@ class percona::node (
        alias   => 'mysql-server',
   }
 
+  file { '/etc/mysql':
+     ensure => directory,
+     mode   => '0755',
+  }
+  file { '/etc/mysql/conf.d':
+     ensure => directory,
+     mode   => '0755',
+  }
+
   file { "/etc/mysql/my.cnf":
        ensure  => present,
        content => template("percona/my.cnf.erb"),
+       require => File['/etc/mysql', '/etc/mysql/conf.d'],
   }
 
   file { "/usr/local/bin/perconanotify.py":
@@ -117,15 +127,13 @@ class percona::node (
        group   => 'mysql',
        mode    => '0600',
        content => template("percona/wsrep.cnf.erb"),
-       require => [
-             Package['mysql-server'],
-             File['/usr/local/bin/perconanotify.py'],
-       ]
+       require => File['/etc/mysql', '/etc/mysql/conf.d', '/usr/local/bin/perconanotify.py'],
   }
 
   file { "/etc/mysql/conf.d/utf8.cnf":
        ensure  => present,
        source => 'puppet:///modules/percona/utf8.cnf',
+       require => File['/etc/mysql', '/etc/mysql/conf.d'],
   }
 
   file { '/etc/mysql/debian.cnf':
@@ -135,8 +143,8 @@ class percona::node (
        mode    => '0600',
        content => template('percona/debian.cnf.erb'),
        require => [
-             Package['mysql-server'],
              Service['mysql'], # I want this to change after a refresh
+             File['/etc/mysql', '/etc/mysql/conf.d'],
        ],
   }
 
@@ -147,7 +155,7 @@ class percona::node (
        group   => 'mysql',
        mode    => '0600',
        source  => 'puppet:///modules/percona/replication-key.pem',
-       require => Package['mysql-server']
+       require => File['/etc/mysql', '/etc/mysql/conf.d'],
   }
 
   file { '/etc/mysql/replication-cert.pem':
@@ -156,25 +164,13 @@ class percona::node (
        group   => 'mysql',
        mode    => '0644',
        source  => 'puppet:///modules/percona/replication-cert.pem',
-       require => [
-             File['/etc/mysql/replication-key.pem'],
-             Package['mysql-server'],
-       ],
+       require => File['/etc/mysql/replication-key.pem'],
   }
 
   file { '/root/.my.cnf':
        content => template('percona/my.cnf.pass.erb'),
        mode    => '0600',
        require => Exec['set_mysql_rootpw'],
-  }
-
-  file { '/etc/mysql':
-     ensure => directory,
-     mode   => '0755',
-  }
-  file { '/etc/mysql/conf.d':
-     ensure => directory,
-     mode   => '0755',
   }
 
   # This kind of sucks, that I have to specify a difference resource for
@@ -247,7 +243,6 @@ class percona::node (
 	      hasstatus   => true,
         subscribe => File['/etc/mysql/my.cnf',
                           '/etc/mysql/conf.d/wsrep.cnf',
-                          '/etc/mysql/conf.d/tuning.cnf',
                           '/etc/mysql/conf.d/utf8.cnf'],
     }
 }
