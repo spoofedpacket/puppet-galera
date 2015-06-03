@@ -123,13 +123,6 @@ class percona::node (
        ]
   }
 
-  # Very machine-dependant. Should make this into a template
-  # with values sourced from heira or $somewhere_else.
-  file { "/etc/mysql/conf.d/tuning.cnf":
-       ensure  => present,
-       source => 'puppet:///modules/percona/tuning.cnf',
-  }
-
   file { "/etc/mysql/conf.d/utf8.cnf":
        ensure  => present,
        source => 'puppet:///modules/percona/utf8.cnf',
