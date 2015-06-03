@@ -4,6 +4,5 @@ class percona::repo {
         release    => $::lsbdistcodename,
         repos      => 'main',
         key        => 'CD2EFD2A',
-        key_server => 'keys.gnupg.net',
     }
 }
