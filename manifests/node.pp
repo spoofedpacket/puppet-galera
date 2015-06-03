@@ -40,9 +40,14 @@
 #   [*enabled*]
 #     Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 #
-# === Examples
+#   [*package_name*]
+#     Type: String. Default: 'percona-xtradb-cluster-server'. Name of the percona package to install.
 #
-#   Assign class to node in foreman or add a node entry:
+#   [*use_repo*]
+#     Type: Bool. Default: false. Use percona's own apt repo in preference to operating system packages.
+#     Enable this to get more recent versions of percona cluster.
+#
+# === Examples
 #
 #   To create a new cluster from scratch:
 #
@@ -75,12 +80,16 @@ class percona::node (
     $maint_password    = 'maint',
     $old_root_password = '',
     $enabled           = true,
+    $package_name      = 'percona-xtradb-cluster-server',
+    $use_repo          = false
 ) {
 
-  include percona::repo
+  # Enable percona repo to get more up to date versions. Operating
+  # system packages will be used otherwise.
+  if $use_repo {
+   include percona::repo
+  }
    
-  $package_name = 'percona-xtradb-cluster-server-5.5'
- 
   if $enabled {
    $service_ensure = 'running'
   } else {
@@ -89,7 +98,6 @@ class percona::node (
 
   package { $package_name:
        alias   => 'mysql-server',
-       require => Apt::Source['percona'],
   }
 
   file { "/etc/mysql/my.cnf":
