@@ -144,7 +144,7 @@ class percona::node (
        require => [
              Package['mysql-server'],
              Service['mysql'], # I want this to change after a refresh
-         ],
+       ],
   }
 
   # SSL key+cert for authenticated replication
@@ -154,6 +154,7 @@ class percona::node (
        group   => 'mysql',
        mode    => '0600',
        source  => 'puppet:///modules/percona/replication-key.pem',
+       require => Package['mysql-server']
   }
 
   file { '/etc/mysql/replication-cert.pem':
@@ -162,7 +163,10 @@ class percona::node (
        group   => 'mysql',
        mode    => '0644',
        source  => 'puppet:///modules/percona/replication-cert.pem',
-       require => File['/etc/mysql/replication-key.pem']
+       require => [
+             File['/etc/mysql/replication-key.pem'],
+             Package['mysql-server'],
+       ],
   }
 
   file { '/root/.my.cnf':
