@@ -82,7 +82,8 @@ log_error = /var/log/mysql/error.log
 # 
 # Log queries that take longer than 4 seconds.
 #
-log_slow_queries	= /var/log/mysql/mysql-slow.log
+slow_query_log = 1
+slow_query_log_file = /var/log/mysql/mysql-slow.log
 long_query_time = 4
 
 #log-queries-not-using-indexes
