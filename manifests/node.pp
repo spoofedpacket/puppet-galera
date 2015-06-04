@@ -125,8 +125,8 @@ class percona::node (
 
   file { "/etc/mysql/my.cnf":
        ensure  => present,
-       content => template("percona/my.cnf.erb"),
-       require => File['/etc/mysql', '/etc/mysql/conf.d'],
+       source  => 'puppet:///modules/percona/my.cnf',
+       require => File['/etc/mysql'],
   }
 
   file { "/usr/local/bin/perconanotify.py":
