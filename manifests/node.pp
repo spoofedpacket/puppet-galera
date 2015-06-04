@@ -79,20 +79,35 @@ class percona::node (
     $package_name      = 'percona-xtradb-cluster-server-5.6',
 ) {
 
-  # Enable percona repo to get more up to date versions.
-  include percona::repo
-   
   if $enabled {
    $service_ensure = 'running'
   } else {
    $service_ensure = 'stopped'
   }
 
+  # Enable percona repo to get more up to date versions.
+  include apt
+
+  # Chain percona apt source, apt-get update (notify) and 
+  # percona package install (depends on apt-get update running first).
+  apt::source { 'percona':
+      location   => 'http://repo.percona.com/apt',
+      release    => $::lsbdistcodename,
+      repos      => 'main',
+      key        => {
+          'id'     => '430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A',
+          'server' => 'pool.sks-keyservers.net',
+      },
+  } ~>
+  exec { 'update':
+    command     => "/usr/bin/apt-get update",
+    refreshonly => true,
+  } ->
   package { $package_name:
        alias   => 'mysql-server',
        ensure  => installed,
-       require => Class['percona::repo'],
   }
+  # End of chain.
 
   # Create mysql user. Required for setting file ownership.
   user { 'mysql':
