@@ -41,11 +41,7 @@
 #     Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 #
 #   [*package_name*]
-#     Type: String. Default: 'percona-xtradb-cluster-server'. Name of the percona package to install.
-#
-#   [*use_repo*]
-#     Type: Bool. Default: false. Use percona's own apt repo in preference to operating system packages.
-#     Enable this to get more recent versions of percona cluster.
+#     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
 # === Examples
 #
@@ -98,6 +94,11 @@ class percona::node (
        require => Class['percona::repo'],
   }
 
+  # Create mysql user. Required for setting file ownership.
+  user { 'mysql':
+       ensure => present,
+  }
+
   file { '/etc/mysql':
        ensure => directory,
        mode   => '0755',
@@ -125,7 +126,10 @@ class percona::node (
        group   => 'mysql',
        mode    => '0600',
        content => template("percona/wsrep.cnf.erb"),
-       require => File['/etc/mysql', '/etc/mysql/conf.d', '/usr/local/bin/perconanotify.py'],
+       require => [
+             File['/etc/mysql', '/etc/mysql/conf.d', '/usr/local/bin/perconanotify.py'],
+             User['mysql'],
+       ],
   }
 
   file { "/etc/mysql/conf.d/utf8.cnf":
@@ -143,6 +147,7 @@ class percona::node (
        require => [
              Service['mysql'], # I want this to change after a refresh
              File['/etc/mysql', '/etc/mysql/conf.d'],
+             User['mysql'],
        ],
   }
 
@@ -153,7 +158,10 @@ class percona::node (
        group   => 'mysql',
        mode    => '0600',
        source  => 'puppet:///modules/percona/replication-key.pem',
-       require => File['/etc/mysql', '/etc/mysql/conf.d'],
+       require => [
+             File['/etc/mysql', '/etc/mysql/conf.d'],
+             User['mysql'],
+       ]
   }
 
   file { '/etc/mysql/replication-cert.pem':
