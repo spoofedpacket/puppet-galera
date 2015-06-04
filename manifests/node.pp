@@ -80,15 +80,11 @@ class percona::node (
     $maint_password    = 'maint',
     $old_root_password = '',
     $enabled           = true,
-    $package_name      = 'percona-xtradb-cluster-server',
-    $use_repo          = false
+    $package_name      = 'percona-xtradb-cluster-server-5.6',
 ) {
 
-  # Enable percona repo to get more up to date versions. Operating
-  # system packages will be used otherwise.
-  if $use_repo {
-   include percona::repo
-  }
+  # Enable percona repo to get more up to date versions.
+  include percona::repo
    
   if $enabled {
    $service_ensure = 'running'
@@ -98,15 +94,17 @@ class percona::node (
 
   package { $package_name:
        alias   => 'mysql-server',
+       ensure  => installed,
+       require => Class['percona::repo'],
   }
 
   file { '/etc/mysql':
-     ensure => directory,
-     mode   => '0755',
+       ensure => directory,
+       mode   => '0755',
   }
   file { '/etc/mysql/conf.d':
-     ensure => directory,
-     mode   => '0755',
+       ensure => directory,
+       mode   => '0755',
   }
 
   file { "/etc/mysql/my.cnf":
