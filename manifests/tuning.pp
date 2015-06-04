@@ -42,7 +42,7 @@ class percona::tuning (
     $other_options           = undef,
 ) {
 
-  file { "/var/tmp/tuning-test.cnf":
+  file { "/etc/mysql/conf.d/tuning.cnf":
        ensure  => present,
        content => template('percona/tuning.cnf.erb'),
   }
