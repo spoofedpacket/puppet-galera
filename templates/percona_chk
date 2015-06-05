@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-######## This file is managed by Puppet ##########
+# * This file is managed by puppet *
 #
 # This script checks if a mysql server is healthy running on localhost. It will
 # return:

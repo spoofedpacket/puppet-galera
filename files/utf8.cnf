@@ -1,3 +1,7 @@
+#
+# * This file is managed by puppet *
+#
+
 [client]
 default-character-set=utf8
 
