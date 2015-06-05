@@ -131,6 +131,7 @@ class percona::node (
        ensure  => present,
        source  => 'puppet:///modules/percona/my.cnf',
        require => File['/etc/mysql'],
+       notify  => Class['::percona:service'],
   }
 
   file { "/usr/local/bin/perconanotify.py":
@@ -149,12 +150,14 @@ class percona::node (
              File['/etc/mysql', '/etc/mysql/conf.d', '/usr/local/bin/perconanotify.py'],
              User['mysql'],
        ],
+       notify  => Class['::percona:service'],
   }
 
   file { "/etc/mysql/conf.d/utf8.cnf":
        ensure  => present,
        source => 'puppet:///modules/percona/utf8.cnf',
        require => File['/etc/mysql', '/etc/mysql/conf.d'],
+       notify  => Class['::percona:service'],
   }
 
   file { '/etc/mysql/debian.cnf':
@@ -164,7 +167,7 @@ class percona::node (
        mode    => '0600',
        content => template('percona/debian.cnf.erb'),
        require => [
-             Service['mysql'], # I want this to change after a refresh
+             Class['::percona::service'], # I want this to change after a refresh
              File['/etc/mysql', '/etc/mysql/conf.d'],
              User['mysql'],
        ],
@@ -190,6 +193,7 @@ class percona::node (
        mode    => '0644',
        source  => 'puppet:///modules/percona/replication-cert.pem',
        require => File['/etc/mysql/replication-key.pem'],
+       notify  => Class['::percona:service'],
   }
 
   file { '/etc/logrotate.d/percona':
@@ -226,14 +230,17 @@ class percona::node (
       unless    => "mysqladmin -u root -p${root_password} status > /dev/null",
       path      => '/usr/local/sbin:/usr/bin:/usr/local/bin',
       notify    => Exec['mysqld-restart'],
-      require   => [File['/etc/mysql/conf.d'],Service['mysql']],
+      require   => [ 
+            File['/etc/mysql/conf.d'],
+            Class['::percona::service']
+      ],
     }
 
      exec { "set-mysql-password-noroot":
         unless      => "/usr/bin/mysql -u${sst_user} -p${sst_password}",
         command     => "/usr/bin/mysql -uroot -p -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${sst_user}'@'%' identified by '${sst_password}';flush privileges;\"",
-        require     => Service["mysql"],
-        subscribe   => Service["mysql"],
+        require     => Class['::percona::service'],
+        subscribe   => Class['::percona::service'],
         refreshonly => true,
     }
   }
@@ -241,8 +248,8 @@ class percona::node (
     exec { "set-mysql-password":
         unless      => "/usr/bin/mysql -u${sst_user} -p${sst_password}",
         command     => "/usr/bin/mysql -uroot -p${root_password} -e \"set wsrep_on='off'; delete from mysql.user where user=''; grant all on *.* to '${sst_user}'@'%' identified by '${sst_password}';flush privileges;\"",
-        require     => Service["mysql"],
-        subscribe   => Service["mysql"],
+        require     => Class['::percona::service'],
+        subscribe   => Class['::percona::service'],
         refreshonly => true,
     }
 
@@ -254,25 +261,16 @@ class percona::node (
        priv            => 'SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, RELOAD, SHUTDOWN, PROCESS, FILE, REFERENCES, INDEX, ALTER, SHOW DATABASES, SUPER, CREATE TEMPORARY TABLES, LOCK TABLES, EXECUTE, REPLICATION SLAVE, REPLICATION CLIENT, CREATE VIEW, SHOW VIEW, CREATE ROUTINE, ALTER ROUTINE, CREATE USER, EVENT, TRIGGER',
        grant_option    => true,
        require         => [
-          Service['mysql'],
+          Class['::percona::service'],
           File['/root/.my.cnf']
       ],
   }
 
-  service { 'mysql':
-        name        => "mysql",
-        ensure      => $service_ensure,
-        enable      => $enabled,
-        require     => [ 
-            Package['mysql-server'],
-            File['/etc/mysql/my.cnf',
-                 '/etc/mysql/conf.d/wsrep.cnf',
-                 '/etc/mysql/replication-cert.pem']
-        ],
-        hasrestart  => true,
-	      hasstatus   => true,
-        subscribe   => File['/etc/mysql/my.cnf',
-                          '/etc/mysql/conf.d/wsrep.cnf',
-                          '/etc/mysql/conf.d/utf8.cnf'],
+  # Make sure percona package is installed before trying to do anything with the service
+  Package[$package_name] -> Class['::percona::service']
+
+  class { '::percona::service':
+      service_ensure => $service_ensure,
+      service_enable => $enabled,
   }
 }
