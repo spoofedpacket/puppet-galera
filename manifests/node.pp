@@ -53,17 +53,21 @@
 #     }
 #   }
 #
-#   !! IMPORTANT !!: In order to avoid the cluster becoming partitioned, the initial node
-#   *must* be redefined as a joiner with a donor IP (*not* it's own address) once the cluster
-#   has been fully created:
-#
-#   node percona-node1 {
+#   Add more nodes to the cluster once the first node is up and running: 
+# 
+#   node percona-node2 {
 #     class { 'percona::node':   
 #            cluster_name => 'cluster',
 #            joiner       => true,
-#            donor_ip     => 'ip.of.donor',
+#            donor_ip     => 'ip.of.first.node',
 #     }
 #   }
+#
+#   Percona recommend not to add a large number of nodes at once as this could overwhelm the initial node with state transfer events.
+#
+#   !! IMPORTANT !!: In order to avoid the cluster becoming partitioned, the initial node
+#   *must* be redefined as a joiner with a donor IP (*not* it's own address) once the cluster
+#   has been fully created.
 #
 class percona::node (
     $cluster_name	     = 'my_cluster', 
