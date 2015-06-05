@@ -185,6 +185,7 @@ class percona::node (
   file { "/etc/mysql/conf.d/tuning.cnf":
        ensure  => present,
        content => template('percona/tuning.cnf.erb'),
+       require => File['/etc/mysql', '/etc/mysql/conf.d'],
   }
 
   file { '/etc/mysql/debian.cnf':
