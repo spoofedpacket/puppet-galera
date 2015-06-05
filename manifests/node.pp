@@ -192,6 +192,11 @@ class percona::node (
        require => File['/etc/mysql/replication-key.pem'],
   }
 
+  file { '/etc/logrotate.d/percona':
+       ensure  => present,
+       source  => 'puppet:///modules/percona/percona-logrotate',
+  }
+
   file { '/root/.my.cnf':
        content => template('percona/my.cnf.pass.erb'),
        mode    => '0600',
