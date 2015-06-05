@@ -82,7 +82,7 @@ define percona::rights (
 
         exec { "create rights for ${name}" :
             command     => "${mysql_cmd} mysql -e \"${grant_statement}\" && ${mysqladmin_cmd} flush-privileges",
-            unless      => "${mysql_cmd} mysql -e \"show grants for '${user}'@'${host}'\" | grep \"${quoted_database}.\*\" | grep `${mysql_cmd} --skip-column-names -e \"SELECT PASSWORD('${password}')\"`",
+            unless      => "${mysql_cmd} mysql -e \"show grants for '${user}'@'${host}'\" | grep \"${quoted_database}.\\*\" | grep `${mysql_cmd} --skip-column-names -e \"SELECT PASSWORD('${password}')\"`",
             require     => $required,
             path        => ['/bin', '/usr/bin', '/usr/local/bin'],
             logoutput   => true,
