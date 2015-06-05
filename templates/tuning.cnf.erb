@@ -4,19 +4,19 @@
 # Place any MySQL performance tuning settings in here.
 #
 [mysqld]
-innodb_buffer_pool_size     = <%= @innodb_buffer_pool_size %>
-innodb_data_file_path       = <%= @innodb_data_file_path %>
-innodb_flush_method         = <%= @innodb_flush_method %>
-innodb_file_per_table       = <%= @innodb_file_per_table %>
-table_open_cache            = <%= @table_open_cache %>
-max_connections             = <%= @max_connections %>
-wait_timeout                = <%= @wait_timeout %>
-tmp_table_size              = <%= @tmp_table_size %>
-max_heap_table_size         = <%= @max_heap_table_size %>
-thread_cache_size           = <%= @thread_cache_size %>
-open_files_limit            = <%= @open_files_limit %>
-table_definition_cache      = <%= @table_definition_cache %>
-<% if @other_options %>
+innodb_buffer_pool_size     = <%= @tune_innodb_buffer_pool_size %>
+innodb_data_file_path       = <%= @tune_innodb_data_file_path %>
+innodb_flush_method         = <%= @tune_innodb_flush_method %>
+innodb_file_per_table       = <%= @tune_innodb_file_per_table %>
+table_open_cache            = <%= @tune_table_open_cache %>
+max_connections             = <%= @tune_max_connections %>
+wait_timeout                = <%= @tune_wait_timeout %>
+tmp_table_size              = <%= @tune_tmp_table_size %>
+max_heap_table_size         = <%= @tune_max_heap_table_size %>
+thread_cache_size           = <%= @tune_thread_cache_size %>
+open_files_limit            = <%= @tune_open_files_limit %>
+table_definition_cache      = <%= @tune_table_definition_cache %>
+<% if @tune_other_options %>
 #
 # Other options.
 #

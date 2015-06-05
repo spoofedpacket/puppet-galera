@@ -43,6 +43,18 @@
 #   [*package_name*]
 #     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
+#   It is also possible to set a number of parameters via the $tune_ variables and the $tune_other_options
+#   array. Consult the MySQL documentation for these. As these values are very machine-dependent they should
+#   be set with hiera or something similar:
+#
+#   database-server-with-loads-of-ram.yaml:
+# 
+#     ---
+#     percona::node:tune_innodb_buffer_pool_size: '40G'
+#     percona::node:tune_innodb_flush_method: 'O_DIRECT'
+#
+#   These variables are set to the defaults recommended by the MySQL documentation.
+#
 # === Examples
 #
 #   To create a new cluster from scratch:
@@ -81,6 +93,19 @@ class percona::node (
     $old_root_password = '',
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
+    $tune_innodb_buffer_pool_size = '8388608',
+    $tune_innodb_data_file_path   = 'ibdata1:10M:autoextend', 
+    $tune_innodb_flush_method     = 'fdatasync',
+    $tune_innodb_file_per_table   = '0',
+    $tune_table_open_cache        = '400',
+    $tune_max_connections         = '151',
+    $tune_wait_timeout            = '28800',
+    $tune_tmp_table_size          = '16777216',
+    $tune_max_heap_table_size     = '16777216',
+    $tune_thread_cache_size       = '0',
+    $tune_open_files_limit        = '0',
+    $tune_table_definition_cache  = '256',
+    $tune_other_options           = undef,
 ) {
 
   if $enabled {
@@ -155,6 +180,11 @@ class percona::node (
        ensure  => present,
        source => 'puppet:///modules/percona/utf8.cnf',
        require => File['/etc/mysql', '/etc/mysql/conf.d'],
+  }
+
+  file { "/etc/mysql/conf.d/tuning.cnf":
+       ensure  => present,
+       content => template('percona/tuning.cnf.erb'),
   }
 
   file { '/etc/mysql/debian.cnf':
@@ -272,6 +302,7 @@ class percona::node (
         hasrestart  => true,
 	      hasstatus   => true,
         subscribe   => File['/etc/mysql/my.cnf',
+                          '/etc/mysql/conf.d/tuning.cnf',
                           '/etc/mysql/conf.d/wsrep.cnf',
                           '/etc/mysql/conf.d/utf8.cnf'],
   }
