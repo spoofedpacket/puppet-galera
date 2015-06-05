@@ -18,7 +18,7 @@
 #    initial state transfer from when joining a cluster.
 #
 #   [*sst_method*] 
-#    Type: String. Default: 'xtrabackupv2'. SST (state transfer method) to when joining
+#    Type: String. Default: 'xtrabackup-v2'. SST (state transfer method) to when joining
 #    a cluster. Other possibilities are 'xtrabackup', 'rsync' and 'mysqldump'. See galera docs for
 #    further info.
 #
@@ -246,6 +246,7 @@ class percona::node (
         refreshonly => true,
     }
 
+  # The debian-sys-maint user needs to have identical credentials across the cluster
   percona::rights { 'debian-sys-maint user':
        database        => '*',
        user            => 'debian-sys-maint',
@@ -257,7 +258,6 @@ class percona::node (
           File['/root/.my.cnf']
       ],
   }
-
 
   service { 'mysql':
         name        => "mysql",
@@ -271,8 +271,8 @@ class percona::node (
         ],
         hasrestart  => true,
 	      hasstatus   => true,
-        subscribe => File['/etc/mysql/my.cnf',
+        subscribe   => File['/etc/mysql/my.cnf',
                           '/etc/mysql/conf.d/wsrep.cnf',
                           '/etc/mysql/conf.d/utf8.cnf'],
-    }
+  }
 }
