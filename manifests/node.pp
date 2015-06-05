@@ -73,7 +73,7 @@ class percona::node (
     $cluster_name	     = 'my_cluster', 
     $joiner 		       = false,
     $donor_ip          = '0.0.0.0',
-    $sst_method        = 'xtrabackupv2',
+    $sst_method        = 'xtrabackup-v2',
     $sst_user          = 'wsrep_sst',
     $sst_password      = 'password',
     $root_password     = 'password',
