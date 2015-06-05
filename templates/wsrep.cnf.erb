@@ -1,3 +1,7 @@
+#
+# * This file is managed by puppet *
+#
+
 # This file contains wsrep-related mysqld options. It should be included
 # in the main MySQL configuration file.
 #
@@ -20,9 +24,6 @@ default-storage-engine=innodb
 
 # to avoid issues with 'bulk mode inserts' using autoinc
 innodb_autoinc_lock_mode=2
-
-# This is a must for paralell applying
-innodb_locks_unsafe_for_binlog=1
 
 # Query Cache is not supported with wsrep
 query_cache_size=0
