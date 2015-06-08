@@ -92,56 +92,56 @@ to true and nominating a donor via the $donor_ip parameter.
   ```
 ## Parameters
  
-`percona::node` class:
+### percona::node
 
-###`cluster_name`
+####`cluster_name`
 
 Type: String. Default: 'my_cluster'. Name of the cluster to create or join.
 
-###`joiner`
+####`joiner`
 
 Type: Bool. Default: 'false'. Is the node joining an existing cluster?
 
-###`donor_ip` 
+####`donor_ip` 
 
 Type: String. Default: '0.0.0.0'. IP of pre-existing node to perform an
 initial state transfer from when joining a cluster.
 
-###`sst_method` 
+####`sst_method` 
 
 Type: String. Default: 'xtrabackup-v2'. SST (state transfer method) to use when joining
 a cluster. Other possibilities are 'xtrabackup', 'rsync' and 'mysqldump'. See percona docs for
 further info.
 
-###`sst_user`
+####`sst_user`
 
 Type: String. Default: 'wsrep_sst'. MySQL user that performs the SST. Only used for the 'mysqldump' SST method.
 
-###`sst_password`
+####`sst_password`
 
 Type: String. Default: 'password'. Password for SST MySQL user.
 
-###`root_password`
+####`root_password`
 
 Type: String. Default: 'password'. Password for the MySQL root user.
 
-###`maint_password`
+####`maint_password`
 
 Type: String. Default: 'maint'. Password for the debian_sys_maint MySQL user.
 
-###`old_root_password`
+####`old_root_password`
 
 Type: String. Default: ''.
 
-###`enabled`
+####`enabled`
 
 Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 
-###`package_name`
+####`package_name`
 
 Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 
-## MySQL tuning
+### MySQL tuning
 
 It is also possible to set a number of parameters via the $tune_ variables and the $tune_other_options
 array. Consult the MySQL documentation for these. As these values are very machine-dependent they should
