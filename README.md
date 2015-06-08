@@ -92,6 +92,8 @@ to true and nominating a donor via the $donor_ip parameter.
   ```
 ## Parameters
  
+`percona::node` class:
+
 ###`cluster_name`
 
 Type: String. Default: 'my_cluster'. Name of the cluster to create or join.
@@ -107,8 +109,8 @@ initial state transfer from when joining a cluster.
 
 ###`sst_method` 
 
-Type: String. Default: 'xtrabackup'. SST (state transfer method) to when joining
-a cluster. Other possibilities are 'rsync' and 'mysqldump'. See percona docs for
+Type: String. Default: 'xtrabackup-v2'. SST (state transfer method) to use when joining
+a cluster. Other possibilities are 'xtrabackup', 'rsync' and 'mysqldump'. See percona docs for
 further info.
 
 ###`sst_user`
@@ -134,6 +136,24 @@ Type: String. Default: ''.
 ###`enabled`
 
 Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
+
+###`package_name`
+
+Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
+
+## MySQL tuning
+
+It is also possible to set a number of parameters via the $tune_ variables and the $tune_other_options
+array. Consult the MySQL documentation for these. As these values are very machine-dependent they should
+be set with hiera or something similar:
+
+   database-server-with-loads-of-ram.yaml:
+
+     ---
+     percona::node:tune_innodb_buffer_pool_size: '40G'
+     percona::node:tune_innodb_flush_method: 'O_DIRECT'
+
+These variables are set to the defaults recommended by the MySQL documentation.
 
 ## Author
 
