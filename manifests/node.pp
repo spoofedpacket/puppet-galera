@@ -95,7 +95,7 @@ class percona::node (
     $package_name      = 'percona-xtradb-cluster-server-5.6',
     $tune_innodb_buffer_pool_size = '8388608',
     $tune_innodb_data_file_path   = 'ibdata1:10M:autoextend', 
-    $tune_innodb_flush_method     = 'fdatasync',
+    $tune_innodb_flush_method     = 'fsync',
     $tune_innodb_file_per_table   = '0',
     $tune_table_open_cache        = '400',
     $tune_max_connections         = '151',
