@@ -17,7 +17,7 @@
 #
 # Example Usage:
 #
-# class {'percona::health-check': }
+#  class {'percona::health_check': }
 #
 class percona::health_check(
   $mysql_host           = '127.0.0.1',
