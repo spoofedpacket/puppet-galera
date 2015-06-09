@@ -106,10 +106,10 @@ class percona::node (
     $old_root_password = '',
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
-    $wsrep_node_address = undef,
-    $ssl_replication = true,
-    $ssl_replication_cert = undef,
-    $ssl_replication_key = undef,
+    $wsrep_node_address           = undef,
+    $ssl_replication              = false,
+    $ssl_replication_cert         = undef,
+    $ssl_replication_key          = undef,
     $tune_innodb_buffer_pool_size = '134217728',
     $tune_innodb_data_file_path   = 'ibdata1:12M:autoextend',
     $tune_innodb_flush_method     = 'fsync',
@@ -129,6 +129,16 @@ class percona::node (
    $service_ensure = 'running'
   } else {
    $service_ensure = 'stopped'
+  }
+
+  # Config files to watch/depend on. Add SSL cert if SSL replication is enabled.
+  $default_config_files = ['/etc/mysql/my.cnf', '/etc/mysql/conf.d/wsrep.cnf', '/etc/mysql/conf.d/utf8.cnf',
+                         '/etc/mysql/conf.d/tuning.cnf']
+  if $ssl_replication {
+    $mysql_config_files = concat($default_config_files, '/etc/mysql/replication-cert.pem')
+  }
+  else {
+    $mysql_config_files = $default_config_files
   }
 
   # Enable percona repo to get more up to date versions.
@@ -218,26 +228,36 @@ class percona::node (
        ],
   }
 
-  # SSL key+cert for authenticated replication
-  file { '/etc/mysql/replication-key.pem':
-       ensure  => present,
-       owner   => 'mysql',
-       group   => 'mysql',
-       mode    => '0600',
-       source  => 'puppet:///modules/percona/replication-key.pem',
-       require => [
-             File['/etc/mysql', '/etc/mysql/conf.d'],
-             User['mysql'],
-       ]
-  }
+  # If required, SSL key+cert for encrypted replication
+  if $ssl_replication {
+    file { '/etc/mysql/replication-key.pem':
+         ensure  => present,
+         owner   => 'mysql',
+         group   => 'mysql',
+         mode    => '0600',
+         content => $ssl_replication_key,
+         require => [
+               File['/etc/mysql', '/etc/mysql/conf.d'],
+               User['mysql'],
+         ]
+    }
 
-  file { '/etc/mysql/replication-cert.pem':
-       ensure  => present,
-       owner   => 'mysql',
-       group   => 'mysql',
-       mode    => '0644',
-       source  => 'puppet:///modules/percona/replication-cert.pem',
-       require => File['/etc/mysql/replication-key.pem'],
+    file { '/etc/mysql/replication-cert.pem':
+         ensure  => present,
+         owner   => 'mysql',
+         group   => 'mysql',
+         mode    => '0644',
+         content  => $ssl_replication_cert,
+         require => File['/etc/mysql/replication-key.pem'],
+    }
+
+    if !$ssl_replication_cert {
+      fail("SSL replication enabled but cert not provided. Bailing out.")
+    }
+
+    if !$ssl_replication_key {
+      fail("SSL replication enabled but key not provided. Bailing out.")
+    }
   }
 
   file { '/etc/logrotate.d/percona':
@@ -313,16 +333,10 @@ class percona::node (
         enable      => $enabled,
         require     => [ 
             Package['mysql-server'],
-            File['/etc/mysql/my.cnf',
-                 '/etc/mysql/conf.d/wsrep.cnf',
-                 '/etc/mysql/conf.d/tuning.cnf',
-                 '/etc/mysql/replication-cert.pem']
+            File[$mysql_config_files],
         ],
         hasrestart  => true,
 	      hasstatus   => true,
-        subscribe   => File['/etc/mysql/my.cnf',
-                          '/etc/mysql/conf.d/wsrep.cnf',
-                          '/etc/mysql/conf.d/tuning.cnf',
-                          '/etc/mysql/conf.d/utf8.cnf'],
+        subscribe   => File[$mysql_config_files],
   }
 }
