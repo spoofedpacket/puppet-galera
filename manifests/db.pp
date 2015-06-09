@@ -42,21 +42,21 @@ define percona::db (
   $enforce_sql = false
 ) {
 
-  database { $name:
+  mysql { $name:
     ensure   => present,
     charset  => $charset,
     provider => 'mysql',
     require  => Class['percona::node'],
   }
 
-  database_user { "${user}@${host}":
+  mysql_user { "${user}@${host}":
     ensure        => present,
     password_hash => mysql_password($password),
     provider      => 'mysql',
     require       => Database[$name],
   }
 
-  database_grant { "${user}@${host}/${name}":
+  mysql_grant { "${user}@${host}/${name}":
     privileges => $grant,
     provider   => 'mysql',
     require    => Database_user["${user}@${host}"],
