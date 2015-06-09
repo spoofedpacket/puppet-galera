@@ -141,6 +141,19 @@ Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 
 Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 
+####`wsrep_node_address`
+Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
+
+####`ssl_replication`
+Type: Bool. Default: False. Enable wsrep encryption with SSL. You *must* set the ssl_replication_cert 
+and ssl_replication_key variables if this is enabled. This must be same across the cluster.
+
+####`ssl_replication_cert`
+Type: String. Default: Undefined. SSL certificate to use for replication. This must be same across the cluster.
+
+####`ssl_replication_key`
+Type: String. Default: Undefined. SSL key to use for replication. This must be same across the cluster.
+
 ### MySQL tuning
 
 It is also possible to set a number of parameters via the $tune_ variables and the $tune_other_options
