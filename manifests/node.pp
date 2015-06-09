@@ -43,6 +43,19 @@
 #   [*package_name*]
 #     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
+#   [*wsrep_node_address*]
+#     Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
+#
+#   [*ssl_replication*]
+#     Type: Bool. Default: False. Enable wsrep encryption with SSL. You *must* set the ssl_replication_cert and
+#     ssl_replication_key variables if this is enabled. This must be same across the cluster.
+#
+#   [*ssl_replication_cert*]
+#     Type: String. Default: Undefined. SSL certificate to use for replication. This must be same across the cluster.
+#
+#   [*ssl_replication_key*]
+#     Type: String. Default: Undefined. SSL key to use for replication. This must be same across the cluster.
+#
 #   It is also possible to set a number of parameters via the $tune_ variables and the $tune_other_options
 #   array. Consult the MySQL documentation for these. As these values are very machine-dependent they should
 #   be set with hiera or something similar:
@@ -93,6 +106,10 @@ class percona::node (
     $old_root_password = '',
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
+    $wsrep_node_address = undef,
+    $ssl_replication = true,
+    $ssl_replication_cert = undef,
+    $ssl_replication_key = undef,
     $tune_innodb_buffer_pool_size = '134217728',
     $tune_innodb_data_file_path   = 'ibdata1:12M:autoextend',
     $tune_innodb_flush_method     = 'fsync',

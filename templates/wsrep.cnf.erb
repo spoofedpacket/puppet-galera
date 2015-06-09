@@ -36,9 +36,11 @@ query_cache_type=0
 wsrep_provider=/usr/lib/libgalera_smm.so
 
 # Provider specific configuration options
-wsrep_provider_options="socket.ssl_cert = /etc/mysql/replication-cert.pem; socket.ssl_key = /etc/mysql/replication-key.pem"
+<% if @ssl_replication -%>
+wsrep_provider_options="socket.ssl = 1; socket.ssl_cert = /etc/mysql/replication-cert.pem; socket.ssl_key = /etc/mysql/replication-key.pem"
+<% end -%>
 
-# Logical cluster name. Should be the same for all nodes.
+# Logical cluster name. Must be the same for all nodes.
 wsrep_cluster_name="<%= @cluster_name-%>"
 
 # Group communication system handle
@@ -54,7 +56,11 @@ wsrep_cluster_address="gcomm://"
 # Base replication <address|hostname>[:port] of the node.
 # The values supplied will be used as defaults for state transfer receiving,
 # listening ports and so on. Default: address of the first network interface.
-wsrep_node_address="<%= @ipaddress_eth1-%>"
+<% if @wsrep_node_address -%>
+wsrep_node_address="<%=@wsrep_node_address-%>"
+<% else -%>
+wsrep_node_address="<%= @ipaddress-%>"
+<% end -%>
 
 # Address for incoming client connections. Autodetect by default.
 #wsrep_node_incoming_address=
