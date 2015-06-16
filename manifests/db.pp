@@ -42,24 +42,23 @@ define percona::db (
   $enforce_sql = false
 ) {
 
-  mysql { $name:
+  mysql_database { $name:
     ensure   => present,
     charset  => $charset,
-    provider => 'mysql',
     require  => Class['percona::node'],
   }
 
   mysql_user { "${user}@${host}":
     ensure        => present,
     password_hash => mysql_password($password),
-    provider      => 'mysql',
-    require       => Database[$name],
+    require       => Mysql_database[$name],
   }
 
-  mysql_grant { "${user}@${host}/${name}":
+  mysql_grant { "${user}@${host}/${name}.*":
     privileges => $grant,
-    provider   => 'mysql',
-    require    => Database_user["${user}@${host}"],
+    table      => "${name}.*",
+    user       => "${user}@${host}",
+    require    => Mysql_user["${user}@${host}"],
   }
 
   $refresh = ! $enforce_sql
@@ -69,8 +68,8 @@ define percona::db (
       command     => "/usr/bin/mysql ${name} < ${sql}",
       logoutput   => true,
       refreshonly => $refresh,
-      require     => Database_grant["${user}@${host}/${name}"],
-      subscribe   => Database[$name],
+      require     => Mysql_grant["${user}@${host}/${name}.*"],
+      subscribe   => Mysql_database[$name],
     }
   }
 
