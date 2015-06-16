@@ -15,18 +15,35 @@
 #     }
 #   }
 #
-class percona::garbd ( $cluster_name = 'my_cluster', $peer_ip = '0.0.0.0' ) {
+class percona::garbd ( 
+    $cluster_name = 'my_cluster', 
+    $peer_ip      = '0.0.0.0', 
+    $package_name = 'percona-xtradb-cluster-galera-2.x',
+) {
 
-    # Add percona repository and key
-    include percona::repo
-   
-    # Only basic galera package required for garbd
-    $package_name = 'percona-xtradb-cluster-galera-2.x'
- 
+    # Enable percona repo to get more up to date versions.
+    include apt
+  
+    # Chain percona apt source, apt-get update (notify) and 
+    # percona package install (depends on apt-get update running first).
+    apt::source { 'percona':
+        location   => 'http://repo.percona.com/apt',
+        release    => $::lsbdistcodename,
+        repos      => 'main',
+        key        => {
+            'id'     => '430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A',
+            'server' => 'pool.sks-keyservers.net',
+        },
+    } ~>
+    exec { 'update':
+      command     => "/usr/bin/apt-get update",
+      refreshonly => true,
+    } ->
     package { $package_name:
-         alias    => 'galera',
-         require  => Apt::Source['percona'],
+         alias   => 'galera',
+         ensure  => installed,
     }
+    # End of chain.
 
     file { '/etc/garbd':
         ensure => directory,
