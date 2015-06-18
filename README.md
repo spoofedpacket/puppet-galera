@@ -141,6 +141,9 @@ Type: Bool. Default: true. Enable or disable the MySQL/Percona service.
 
 Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 
+####`repo_location`
+Type: String. Default: 'http://repo.percona.com/apt'. Location of the apt repo to use.
+
 ####`wsrep_node_address`
 Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
 

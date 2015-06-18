@@ -43,6 +43,9 @@
 #   [*package_name*]
 #     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
+#   [*repo_location*]
+#     Type: String. Default: 'http://repo.percona.com/apt'. Location of the apt repo to use.
+#
 #   [*wsrep_node_address*]
 #     Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
 #
@@ -106,6 +109,7 @@ class percona::node (
     $old_root_password = '',
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
+    $repo_location     = 'http://repo.percona.com/apt',
     $wsrep_node_address           = undef,
     $ssl_replication              = false,
     $ssl_replication_cert         = undef,
@@ -147,7 +151,7 @@ class percona::node (
   # Chain percona apt source, apt-get update (notify) and 
   # percona package install (depends on apt-get update running first).
   apt::source { 'percona':
-      location   => 'http://repo.percona.com/apt',
+      location   => $repo_location,
       release    => $::lsbdistcodename,
       repos      => 'main',
       key        => {
