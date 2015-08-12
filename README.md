@@ -144,6 +144,12 @@ Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona 
 ####`repo_location`
 Type: String. Default: 'http://repo.percona.com/apt'. Location of the apt repo to use.
 
+####`percona_notify_from`
+Type: String. Default: 'percona-noreply@example.com˙. From address for percona notifications.
+
+####`percona_notify_to`
+Type: String. Default: 'root@localhost'. Where to send percona notifications.
+
 ####`wsrep_node_address`
 Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
 
