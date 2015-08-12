@@ -34,11 +34,11 @@ class percona::garbd (
             'id'     => '430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A',
             'server' => 'pool.sks-keyservers.net',
         },
-    } ~>
+    } ~> # Tell apt to update when percona source is in place
     exec { 'update':
       command     => "/usr/bin/apt-get update",
       refreshonly => true,
-    } ->
+    } -> # Wait until apt has updated before installing package
     package { $package_name:
          alias   => 'galera',
          ensure  => installed,
