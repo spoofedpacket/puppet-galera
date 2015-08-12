@@ -49,6 +49,9 @@
 #   [*percona_notify_to*]
 #     Type: String. Default: 'root@localhost'. Where to send percona notifications.
 #
+#   [*repo_location*]
+#     Type: String. Default: 'http://repo.percona.com/apt'. Location of the apt repo to use.
+#
 #   [*wsrep_node_address*]
 #     Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
 #
