@@ -43,6 +43,12 @@
 #   [*package_name*]
 #     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
+#   [*percona_notify_from*]
+#     Type: String. Default: 'percona-noreply@example.com˙. From address for percona notifications.
+#
+#   [*percona_notify_to*]
+#     Type: String. Default: 'root@localhost'. Where to send percona notifications.
+#
 #   [*wsrep_node_address*]
 #     Type: String. Default: Undefined. Source IP address to use for xtrabackup etc.
 #
@@ -106,6 +112,9 @@ class percona::node (
     $old_root_password = '',
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
+    $repo_location     = 'http://repo.percona.com/apt',
+    $percona_notify_from = 'percona-noreply@example.com',
+    $percona_notify_to   = 'root@localhost',
     $wsrep_node_address           = undef,
     $ssl_replication              = false,
     $ssl_replication_cert         = undef,
@@ -122,6 +131,8 @@ class percona::node (
     $tune_thread_cache_size       = '8',
     $tune_open_files_limit        = '5000',
     $tune_table_definition_cache  = '1400',
+    $tune_query_cache_size        = '0',
+    $tune_query_cache_type        = '0',
     $tune_other_options           = undef,
 ) {
 
@@ -147,7 +158,7 @@ class percona::node (
   # Chain percona apt source, apt-get update (notify) and 
   # percona package install (depends on apt-get update running first).
   apt::source { 'percona':
-      location   => 'http://repo.percona.com/apt',
+      location   => $repo_location,
       release    => $::lsbdistcodename,
       repos      => 'main',
       key        => {
@@ -186,9 +197,9 @@ class percona::node (
   }
 
   file { "/usr/local/bin/perconanotify.py":
-       ensure => present,
-       source => 'puppet:///modules/percona/perconanotify.py',
-       mode   => '0755',
+       ensure  => present,
+       content => template("percona/perconanotify.py.erb"),
+       mode    => '0755',
   }
 
   file { "/etc/mysql/conf.d/wsrep.cnf":
