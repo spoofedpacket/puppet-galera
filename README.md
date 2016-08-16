@@ -10,7 +10,7 @@ Subsequent nodes can be joined to the cluster by setting the $joiner parameter
 to true and nominating a donor via the $donor_ip parameter.
 
 ## Requirements
-   * camptocamp/augeas
+   * camptocamp/puppet-augeas (For Ubuntu 16.04, >= 1.4.3 is required due to changes in ruby package naming)
    * puppetlabs/apt
    * puppetlabs/stdlib
    * To use the dynamically generated haproxy configs on the client, a working PuppetDB with storeconfigs enabled, in order to use exported resources. This is optional, but highly recommended for production clusters.
