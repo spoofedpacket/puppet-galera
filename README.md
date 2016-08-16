@@ -11,6 +11,7 @@ to true and nominating a donor via the $donor_ip parameter.
 
 ## Requirements
    * camptocamp/augeas
+   * puppetlabs/apt
    * puppetlabs/stdlib
    * To use the dynamically generated haproxy configs on the client, a working PuppetDB with storeconfigs enabled, in order to use exported resources. This is optional, but highly recommended for production clusters.
 
