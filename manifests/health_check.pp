@@ -30,6 +30,9 @@ class percona::health_check(
   $enabled              = true,
 ) {
 
+  # Needed to manage /etc/services
+  include augeas
+
   if $enabled {
     $service_ensure = 'running'
    } else {
