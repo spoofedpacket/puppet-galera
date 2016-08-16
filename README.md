@@ -10,10 +10,9 @@ Subsequent nodes can be joined to the cluster by setting the $joiner parameter
 to true and nominating a donor via the $donor_ip parameter.
 
 ## Requirements
-
+   * camptocamp/augeas
    * puppetlabs/stdlib
-   * haproxy
-   * Working PuppetDB with storeconfigs enabled, in order to use exported resources.
+   * To use the dynamically generated haproxy configs on the client, a working PuppetDB with storeconfigs enabled, in order to use exported resources. This is optional, but highly recommended for production clusters.
 
 ## Usage
 
