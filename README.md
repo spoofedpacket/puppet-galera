@@ -175,7 +175,3 @@ be set with hiera or something similar:
      percona::node:tune_innodb_flush_method: 'O_DIRECT'
 
 These variables are set to the defaults recommended by the MySQL documentation.
-
-## Author
-
-Robert Gallagher <rob@spoofedpacket.net>
