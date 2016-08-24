@@ -17,7 +17,7 @@ to true and nominating a donor via the $donor_ip parameter.
 
 ## Usage
 
-   Assign class percona::node via your favourite ENC or simply add a node entry.
+   Assign class percona::node via your favourite ENC or simply add a node entry. It's best to start with *one* node intially, then add the others once the initial node is up and running.
 
 ### Create a new cluster from scratch
 
