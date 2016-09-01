@@ -44,7 +44,7 @@
 #     Type: String. Default: 'percona-xtradb-cluster-server-5.6'. Name of the percona package to install.
 #
 #   [*percona_notify_from*]
-#     Type: String. Default: 'percona-noreply@example.com˙. From address for percona notifications.
+#     Type: String. Default: 'percona-noreply@localhost˙. From address for percona notifications.
 #
 #   [*percona_notify_to*]
 #     Type: String. Default: 'root@localhost'. Where to send percona notifications.
@@ -116,7 +116,7 @@ class percona::node (
     $enabled           = true,
     $package_name      = 'percona-xtradb-cluster-server-5.6',
     $repo_location     = 'http://repo.percona.com/apt',
-    $percona_notify_from = 'percona-noreply@example.com',
+    $percona_notify_from = 'percona-noreply@localhost',
     $percona_notify_to   = 'root@localhost',
     $wsrep_node_address           = undef,
     $ssl_replication              = false,
@@ -165,9 +165,9 @@ class percona::node (
       release    => $::lsbdistcodename,
       repos      => 'main',
       key        => {
-          'id'     => '430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A',
-          'server' => 'pool.sks-keyservers.net',
-      },
+        'id'    => '430BDF5C56E7C94E848EE60C1C4CBDCDCD2EFD2A',
+        'server' => 'pool.sks-keyservers.net',
+     }
   } ~>
   exec { 'update':
     command     => "/usr/bin/apt-get update",
