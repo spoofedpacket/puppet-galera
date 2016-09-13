@@ -207,8 +207,8 @@ class percona::node (
 
   file { "/etc/mysql/conf.d/wsrep.cnf":
        ensure  => present,
-       owner   => 'mysql',
-       group   => 'mysql',
+       owner   => 'root',
+       group   => 'root',
        mode    => '0600',
        content => template("percona/wsrep.cnf.erb"),
        require => [
@@ -231,8 +231,8 @@ class percona::node (
 
   file { '/etc/mysql/debian.cnf':
        ensure  => present,
-       owner   => 'mysql',
-       group   => 'mysql',
+       owner   => 'root',
+       group   => 'root',
        mode    => '0600',
        content => template('percona/debian.cnf.erb'),
        require => [
@@ -246,8 +246,8 @@ class percona::node (
   if $ssl_replication {
     file { '/etc/mysql/replication-key.pem':
          ensure  => present,
-         owner   => 'mysql',
-         group   => 'mysql',
+         owner   => 'root',
+         group   => 'root',
          mode    => '0600',
          content => $ssl_replication_key,
          require => [
@@ -258,8 +258,8 @@ class percona::node (
 
     file { '/etc/mysql/replication-cert.pem':
          ensure  => present,
-         owner   => 'mysql',
-         group   => 'mysql',
+         owner   => 'root',
+         group   => 'root',
          mode    => '0644',
          content  => $ssl_replication_cert,
          require => File['/etc/mysql/replication-key.pem'],
