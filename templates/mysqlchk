@@ -13,9 +13,6 @@ service mysqlchk
         server          = <%= @mysqlchk_script_dir %>/percona_chk
         log_on_failure  += USERID
         disable         = no
-        only_from       = 193.1.0.0/16
-# recommended to put the IPs that need
-# to connect exclusively (security purposes)
         per_source      = UNLIMITED
 # Recently added (May 20, 2010)
 # Prevents the system from complaining
